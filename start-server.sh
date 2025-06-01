@@ -6,10 +6,10 @@ echo "Starting server for DOM-Based Security Testing with ZAP Lab..."
 # Check if Python is available
 if command -v python3 &>/dev/null; then
     echo "Starting server with Python 3..."
-    python3 -m http.server 3000
+    python3 -m http.server 3000 -d /home/ubuntu/lab
 elif command -v python &>/dev/null; then
     echo "Starting server with Python..."
-    python -m SimpleHTTPServer 3000
+    python -m SimpleHTTPServer 3000 -d /home/ubuntu/lab
 # Check if Node.js/npm is available
 elif command -v npx &>/dev/null; then
     echo "Starting server with Node.js http-server..."
