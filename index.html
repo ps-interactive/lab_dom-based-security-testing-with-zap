@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Globomantics E-Commerce</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Meta tags will be dynamically inserted here -->
+    <div id="dynamic-meta-tags"></div>
+    <!-- Script to add meta tags dynamically based on URL parameters (VULNERABLE) -->
+    <script>
+        function addDynamicMetaTags() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const metaContainer = document.getElementById('dynamic-meta-tags');
+            
+            // VULNERABILITY: Reflect URL parameters directly as meta tags
+            if (urlParams.has('description')) {
+                metaContainer.innerHTML += `<meta name="description" content="${urlParams.get('description')}">`;
+            }
+            
+            if (urlParams.has('keywords')) {
+                metaContainer.innerHTML += `<meta name="keywords" content="${urlParams.get('keywords')}">`;
+            }
+            
+            if (urlParams.has('author')) {
+                metaContainer.innerHTML += `<meta name="author" content="${urlParams.get('author')}">`;
+            }
+            
+            // VULNERABILITY: Custom script injection via URL
+            if (urlParams.has('analytics')) {
+                metaContainer.innerHTML += `<script>${urlParams.get('analytics')}<\/script>`;
+            }
+        }
+        
+        // Execute immediately
+        addDynamicMetaTags();
+    </script>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <div class="logo">Globomantics</div>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="Search products...">
+                <button id="search-button">Search</button>
+            </div>        <div class="nav-controls">
+                <span id="cart-icon">🛒 <span id="cart-count">0</span></span>
+                <button id="theme-toggle">Toggle Theme</button>
+                <a href="#" id="show-newsletter">Newsletter</a>
+            </div>
+        </header>
+
+        <div id="main-content">
+            <!-- This content will be dynamically replaced by JavaScript -->
+            <div id="welcome-message">
+                <h1>Welcome to Globomantics</h1>
+                <p>Loading products...</p>
+            </div>
+        </div>        <!-- Newsletter Modal (with DOM XSS vulnerability) -->
+        <div id="newsletter-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-newsletter">&times;</span>
+                <h2>Subscribe to Our Newsletter</h2>
+                <div class="form-group">
+                    <label for="newsletter-email">Email:</label>
+                    <input type="email" id="newsletter-email" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="newsletter-name">Your Name:</label>
+                    <input type="text" id="newsletter-name" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="newsletter-interests">Topics of Interest:</label>
+                    <input type="text" id="newsletter-interests" placeholder="e.g., Juices, Smoothies, Health">
+                </div>
+                <button id="submit-newsletter">Subscribe</button>
+                <div id="newsletter-message"></div>
+            </div>
+        </div>
+        
+        <!-- Quick Search Widget Modal (with DOM XSS vulnerability) -->
+        <div id="quick-search-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-quick-search">&times;</span>
+                <h2>Quick Search</h2>
+                <div class="form-group">
+                    <input type="text" id="quick-search-input" placeholder="Search products...">
+                    <button id="quick-search-button">Search</button>
+                </div>
+                <div id="quick-search-results"></div>
+            </div>
+        </div>
+
+        <!-- Product Detail Modal -->
+        <div id="product-detail-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-product-detail">&times;</span>
+                <div id="product-detail-content"></div>
+            </div>
+        </div>
+
+        <!-- Cart Modal -->
+        <div id="cart-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-cart">&times;</span>
+                <h2>Your Shopping Cart</h2>
+                <div id="cart-items-container"></div>
+                <div id="cart-summary">
+                    <p>Total: $<span id="cart-total">0.00</span></p>
+                    <button id="checkout-button">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Checkout Form -->
+        <div id="checkout-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-checkout">&times;</span>
+                <h2>Checkout</h2>
+                <form id="checkout-form">
+                    <div class="form-group">
+                        <label for="full-name">Full Name:</label>
+                        <input type="text" id="full-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="billing-address">Billing Address:</label>
+                        <textarea id="billing-address" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="credit-card">Credit Card Number:</label>
+                        <input type="text" id="credit-card" required pattern="[0-9]{16}">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiry">Expiry Date (MM/YY):</label>
+                        <input type="text" id="expiry" required pattern="[0-9]{2}/[0-9]{2}">
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV:</label>
+                        <input type="text" id="cvv" required pattern="[0-9]{3}">
+                    </div>
+                    <button type="submit" id="place-order">Place Order</button>
+                </form>
+            </div>
+        </div>        <!-- Order Confirmation -->
+        <div id="order-confirmation" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-confirmation">&times;</span>
+                <h2>Order Confirmed!</h2>
+                <div id="order-details"></div>
+                <button id="continue-shopping">Continue Shopping</button>
+            </div>
+        </div>
+        
+        <!-- Product Review Form (with DOM XSS vulnerability) -->
+        <div id="product-review-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-review">&times;</span>
+                <h2>Write a Product Review</h2>
+                <div class="form-group">
+                    <label for="review-name">Your Name:</label>
+                    <input type="text" id="review-name" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="review-rating">Rating:</label>
+                    <select id="review-rating">
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="review-text">Your Review:</label>
+                    <textarea id="review-text" placeholder="Write your review here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="review-website">Your Website (optional):</label>
+                    <input type="text" id="review-website" placeholder="https://yourblog.com">
+                </div>
+                <button id="submit-review">Submit Review</button>
+                <div id="review-result"></div>
+            </div>
+        </div>
+        
+        <!-- Contact Form (with DOM XSS vulnerability) -->
+        <div id="contact-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-contact">&times;</span>
+                <h2>Contact Us</h2>
+                <div class="form-group">
+                    <label for="contact-name">Your Name:</label>
+                    <input type="text" id="contact-name" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="contact-email">Email:</label>
+                    <input type="email" id="contact-email" placeholder="email@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="contact-subject">Subject:</label>
+                    <input type="text" id="contact-subject" placeholder="Enter subject">
+                </div>
+                <div class="form-group">
+                    <label for="contact-message">Message:</label>
+                    <textarea id="contact-message" placeholder="Type your message..."></textarea>
+                </div>
+                <button id="submit-contact">Send Message</button>
+                <div id="contact-result"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
